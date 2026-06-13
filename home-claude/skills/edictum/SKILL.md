@@ -1,6 +1,7 @@
 ---
 name: edictum
-description: Token-efficient delegation playbook for Claude Code. Use whenever a request needs more than a trivial inline edit — any multi-step implementation, feature, bug-fix batch, audit, refactor, or migration. Edictum turns the main session into a COMMANDER that writes cold-executable task specs and delegates the actual coding to OpenAI Codex (free of Claude tokens) and to cheap sonnet subagents, then verifies via fresh-context checkers. Invoke when planning how to split or hand off implementation work, when deciding which model/effort to use, when Fable 5 wants to drop control to Opus/Sonnet, or when running the /delegate pipeline. Keywords: delegate, Codex, spec, pipeline-runner, handoff, token budget, division of labor.
+description: >-
+  Token-efficient delegation playbook for Claude Code. Use whenever a request needs more than a trivial inline edit — any multi-step implementation, feature, bug-fix batch, audit, refactor, or migration. Edictum turns the main session into a COMMANDER that writes cold-executable task specs and delegates the actual coding to OpenAI Codex (free of Claude tokens) and to cheap sonnet subagents, then verifies via fresh-context checkers. Invoke when planning how to split or hand off implementation work, when deciding which model/effort to use, when Fable 5 wants to drop control to Opus/Sonnet, or when running the /delegate pipeline. Keywords: delegate, Codex, spec, pipeline-runner, handoff, token budget, division of labor.
 ---
 
 # Edictum — Commander × Codex Delegation
@@ -34,11 +35,13 @@ the loop, how to write specs, how to invoke Codex safely, and how to pick model/
    get separate `git worktree`s.
 2. **Spec.** Spawn `spec-builder` (sonnet) with a short directive (goal + intent, fixed
    decisions, likely files, constraints, executor + priority). It writes a cold-executable
-   spec to `docs/tasks/<executor>-p<priority>-<n>-<slug>.md`. Spawn several in parallel
+   spec to `.claude/tasks/<executor>-p<priority>-<n>-<slug>.md`. Spawn several in parallel
    for independent tasks. Spec sections: 前提コンテキスト (incl. env workarounds) /
    現状コード (verbatim current code for changed regions) / 変更指示 (fixed vs. free) /
    受け入れ基準 (runnable) / 納品形態 (branch, commit/PR/CI policy). See
    `reference/task-spec-template.md`.
+   Keep `.claude/tasks/` and `.claude/tasks/results/` local and gitignored; they are
+   ephemeral work products that may contain verbatim source or secrets.
 3. **Execute end-to-end.** `Agent` tool, `subagent_type: "codex:codex-rescue"`, pointing
    at the spec file, `--write`, `--background`. Default delivery: Codex owns the full git
    lifecycle (branch → commit → push → draft PR → CI green) unless the spec says
@@ -114,7 +117,7 @@ Heuristics:
 - **Fable 5 → phase zero only.** Once direction is set, propose handing control to Opus
   (default commander) or Sonnet (routine streams) rather than burning frontier tokens.
 - **Within a session**: delegate the spec-batch loop to `pipeline-runner`.
-- **Across sessions**: write `docs/tasks/HANDOFF-<slug>.md` from `reference/handoff-template.md`
+- **Across sessions**: write `.claude/tasks/HANDOFF-<slug>.md` from `reference/handoff-template.md`
   and continue in a lower-tier session. Finish/cancel in-flight Codex jobs first (visibility
   is session-scoped).
 - **Escalate back up** only for: two consecutive FAILs on one spec, an architectural

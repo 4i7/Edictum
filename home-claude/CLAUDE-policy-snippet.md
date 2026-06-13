@@ -38,7 +38,7 @@ fit, escalate rather than improvise.
 - **Sonnet 4.6 — commander for routine streams**: specs cut, mechanical progression.
 - **Handoff within a session**: give the whole spec-batch loop to `pipeline-runner`
   (pins sonnet; `model: opus` for risky streams); consume only its verdict table.
-- **Handoff across sessions**: write `docs/tasks/HANDOFF-<slug>.md` from the skill's
+- **Handoff across sessions**: write `.claude/tasks/HANDOFF-<slug>.md` from the skill's
   handoff template; continue in an Opus/Sonnet session.
 - **Escalate back up** (commander → user → Fable) only for: two consecutive FAILs on
   one spec, an architectural surprise, or a scope change.

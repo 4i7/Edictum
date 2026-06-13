@@ -77,6 +77,17 @@ The installer:
 
 Restart your Claude Code session afterward so the new skill/agents/command load.
 
+## Repo hygiene
+
+Edictum writes cold-executable specs and verdicts under local, ephemeral work
+directories that may contain verbatim source or secrets. Add these paths to the
+target project's `.gitignore`:
+
+```
+.claude/tasks/
+.claude/tasks/results/
+```
+
 ## Usage
 
 - Just ask for multi-step implementation work normally — the commander policy + skill

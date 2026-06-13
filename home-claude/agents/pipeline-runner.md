@@ -54,9 +54,9 @@ Defaults when the caller leaves a branch unspecified:
 - Corrective dispatch already used and a fresh fix-worthy finding appears → mark
   that spec ESCALATE (do not open a third dispatch).
 
-Persist detail, don't inline it: `mkdir -p docs/tasks/results/` and write each
+Persist detail, don't inline it: `mkdir -p .claude/tasks/results/` and write each
 spec's review findings and any FAIL/ESCALATE reasoning to
-`docs/tasks/results/<spec>-verdict.md`. The final verdict table carries only that
+`.claude/tasks/results/<spec>-verdict.md`. The final verdict table carries only that
 path, never the prose. Keep each verdict file small (counts + bullet findings +
 paths — never inlined diffs/logs); if one would be large, write it via a Bash
 heredoc, not the Write tool (the project's Write-truncation hazard).
