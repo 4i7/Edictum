@@ -31,13 +31,14 @@ the loop, how to write specs, how to invoke Codex safely, and how to pick model/
    autonomous runs, so "an audit plus fixing everything it finds" or "a feature plus
    its tests" is ONE spec. Split only at independently mergeable boundaries. Don't read
    source yourself — get repo knowledge from an `Explore` subagent (`model: sonnet`)
-   and consume only its summary. Assign each spec a branch; parallel specs on one repo
-   get separate `git worktree`s.
+   and consume only its summary. Assign each spec a branch and `delivery_mode`;
+   parallel specs on one repo get separate `git worktree`s.
 2. **Spec.** Spawn `spec-builder` (sonnet) with a short directive (goal + intent, fixed
-   decisions, likely files, constraints, executor + priority). It writes a cold-executable
-   spec to `.claude/tasks/<executor>-p<priority>-<n>-<slug>.md`. Spawn several in parallel
-   for independent tasks. Spec sections: 前提コンテキスト (incl. env workarounds) /
-   現状コード (verbatim current code for changed regions) / 変更指示 (fixed vs. free) /
+   decisions, likely files, constraints, executor + priority, branch/worktree, and the
+   explicit `delivery_mode` chosen in step 1). It writes a cold-executable spec to
+   `.claude/tasks/<executor>-p<priority>-<n>-<slug>.md`. Spawn several in parallel for
+   independent tasks. Spec sections: 前提コンテキスト (incl. env workarounds) / 現状コード
+   (verbatim current code for changed regions) / 変更指示 (fixed vs. free) /
    受け入れ基準 (runnable) / 納品形態 (branch, `delivery_mode`, commit/PR/CI policy).
    See `reference/task-spec-template.md`. The commander chooses `delivery_mode` per
    task: `local_only` = edit + test only, no commit; `branch_only` = commit to a

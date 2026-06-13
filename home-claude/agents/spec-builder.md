@@ -42,10 +42,14 @@ Rules:
    implementer ("実装方法は任せるが、〜を維持すること").
 4. 受け入れ基準: every criterion checkable by a command or a quick manual look.
    Always include the build/test command that must pass.
-5. Write the file to `.claude/tasks/<executor>-p<priority>-<n>-<slug>.md` relative to
+5. 納品形態: always write the directive's explicit `delivery_mode` into the spec.
+   If the directive omitted it, choose `pr_allowed` only for a clearly user-owned
+   repo; for non-owned, unfamiliar, or untrusted repos choose `branch_only` or
+   `local_only` unless the directive contains explicit user opt-in for push/PR.
+6. Write the file to `.claude/tasks/<executor>-p<priority>-<n>-<slug>.md` relative to
    the project root (create the directory if needed). Choose `<n>` to avoid
    collision with existing specs. Body in Japanese, matching the template headings.
-6. Spec prose style: dense and factual. No motivation essays, no restating the
+7. Spec prose style: dense and factual. No motivation essays, no restating the
    obvious.
 
 Your final message must be ONLY: the spec file path, then at most 5 short lines —
