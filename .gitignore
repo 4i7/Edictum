@@ -7,3 +7,9 @@ Thumbs.db
 # Backups produced by the installer (never commit a user's CLAUDE.md backup)
 *.bak
 CLAUDE.md.bak
+
+# Ephemeral delegation working artifacts — may contain verbatim source / secrets /
+# internal review findings. Never commit these (local-only, per the edictum skill).
+.claude/tasks/
+.claude/tasks/results/
+.claude/tmp/
