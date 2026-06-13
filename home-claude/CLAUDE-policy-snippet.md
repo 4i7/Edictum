@@ -59,6 +59,7 @@ fit, escalate rather than improvise.
   (haiku) agent and consume only its summary. Don't use it for a single command;
   overhead exceeds savings. Write operations are out of scope and remain owned by
   Codex delivery.
+- If Codex is unavailable (quota/billing/auth), route the spec to a general-purpose subagent (`model: sonnet`; `haiku` for trivial mechanical work) to implement, and tell the user — this spends Claude tokens.
 - Attach intent to directives ("I'm building X for Y; this unblocks Z") — it measurably
   improves Codex/subagent output. Dispatch subagents in parallel; reuse `--resume`.
 - When unsure Codex can handle a task: tighten the directive and delegate anyway. The
