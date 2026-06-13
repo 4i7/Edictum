@@ -59,5 +59,8 @@ fit, escalate rather than improvise.
   improves Codex/subagent output. Dispatch subagents in parallel; reuse `--resume`.
 - When unsure Codex can handle a task: tighten the directive and delegate anyway. The
   commander implements only after two Codex failures on the same spec.
+- Default `pr_allowed` only for user-owned repos; for non-owned, unfamiliar, or
+  untrusted repos, downgrade to `branch_only` or `local_only` unless the user
+  explicitly opts in to push/PR with their `gh` auth.
 - Before merging security-sensitive or architectural changes, run `git diff --stat <base>...HEAD` and review the touched-file list only.
 <!-- EDICTUM:END -->

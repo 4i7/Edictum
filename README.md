@@ -126,6 +126,30 @@ Copy-Item -LiteralPath "$env:USERPROFILE\.claude\CLAUDE.md.bak.<timestamp>" -Des
 
 Restart your Claude Code session afterward so the new skill/agents/command load.
 
+## Validating / reviewing Edictum
+
+Run the repository self-check before reviewing installer, skill, agent, or command
+changes:
+
+```bash
+node scripts/validate-edictum.mjs
+```
+
+Exit 0 means the repo is healthy. The validator uses only Node built-ins and checks
+front matter, task-path hygiene, installer markers, companion-script sentinels, and
+delegation artifact ignores.
+
+Do not judge file health by rendering `raw.githubusercontent.com` content as
+HTML/Markdown. Rendering can strip `<!-- -->` comments and collapse whitespace, which
+creates false positives that make healthy files look empty or malformed. Instead, read
+the raw bytes, for example:
+
+```bash
+gh api repos/<owner>/Edictum/contents/<path> --jq .content | base64 -d
+```
+
+Or clone the repository and run `node scripts/validate-edictum.mjs`.
+
 ## Repo hygiene
 
 Edictum writes cold-executable specs and verdicts under local, ephemeral work

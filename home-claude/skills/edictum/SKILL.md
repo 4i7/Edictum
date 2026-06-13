@@ -42,7 +42,11 @@ the loop, how to write specs, how to invoke Codex safely, and how to pick model/
    See `reference/task-spec-template.md`. The commander chooses `delivery_mode` per
    task: `local_only` = edit + test only, no commit; `branch_only` = commit to a
    local branch, no push; `pr_allowed` = push + open draft PR + CI, and remains the
-   default. Use `local_only` or `branch_only` for sensitive/private work.
+   default for user-owned repos. For non-owned, unfamiliar, or untrusted repos,
+   downgrade to `branch_only` or `local_only`; `pr_allowed` on a non-owned repo
+   requires explicit user opt-in so Edictum never pushes or opens PRs with the
+   user's `gh` auth without consent. Use `local_only` or `branch_only` for
+   sensitive/private work.
    Keep `.claude/tasks/` and `.claude/tasks/results/` local and gitignored; they are
    ephemeral work products that may contain verbatim source or secrets.
 3. **Execute end-to-end.** `Agent` tool, `subagent_type: "codex:codex-rescue"`, pointing

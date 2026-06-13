@@ -19,9 +19,12 @@ Pipeline:
    the bump on a corrective --resume after a FAIL; gpt-5.4-mini + low for mechanical
    bulk edits). Assign each spec its branch name and `delivery_mode`: `local_only`
    (edit + test only, no commit), `branch_only` (commit to a local branch, no push),
-   or `pr_allowed` (push + open draft PR + CI; default). Use `local_only` or
-   `branch_only` for sensitive/private work. Parallel specs on the same repo get
-   separate worktrees. Do not read source files for this — if repo knowledge is
+   or `pr_allowed` (push + open draft PR + CI; default for user-owned repos). For
+   non-owned, unfamiliar, or untrusted repos, downgrade to `branch_only` or
+   `local_only`; `pr_allowed` on a non-owned repo requires explicit user opt-in so
+   Edictum never pushes or opens PRs with the user's `gh` auth without consent. Use
+   `local_only` or `branch_only` for sensitive/private work. Parallel specs on the
+   same repo get separate worktrees. Do not read source files for this — if repo knowledge is
    missing, get it from an `Explore` subagent (`model: sonnet`) and consume only its
    summary.
 2. **Spec.** For each task, spawn the `spec-builder` agent (it defaults to sonnet)
