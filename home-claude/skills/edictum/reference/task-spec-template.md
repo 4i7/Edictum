@@ -18,6 +18,10 @@ Reference examples of completed specs: your project's completed-specs archive (e
 ## 納品形態
 - ブランチ: `<branch name>`（新規作成 or 既存）。並行タスクがある場合は専用の
   `git worktree` を作って作業すること。
+- delivery_mode: `<local_only | branch_only | pr_allowed>`（default: `pr_allowed`）。
+  - `local_only`: edit + test only; do not commit.
+  - `branch_only`: commit to a local branch; do not push.
+  - `pr_allowed`: commit → push → open draft PR → check CI.
 - 既定: 実装完了後、コミット（メッセージは英語・変更単位ごと）→ push → draft PR 作成
   → CI green まで確認して PR URL を報告する。
 - <リモートが無い/共有ワークツリーの場合のみ: "コミットせず作業ツリーに残す" と明記>

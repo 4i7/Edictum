@@ -17,14 +17,17 @@ Pipeline:
    (default codex / gpt-5.5; effort default medium — proven sufficient for
    work-stream units; high only for genuinely hard or >30-min-autonomy specs, and as
    the bump on a corrective --resume after a FAIL; gpt-5.4-mini + low for mechanical
-   bulk edits). Assign each spec its branch name; parallel specs on the same repo
-   get separate worktrees. Do not read source files for this — if repo knowledge
-   is missing, get it from an `Explore` subagent (`model: sonnet`) and consume
-   only its summary.
+   bulk edits). Assign each spec its branch name and `delivery_mode`: `local_only`
+   (edit + test only, no commit), `branch_only` (commit to a local branch, no push),
+   or `pr_allowed` (push + open draft PR + CI; default). Use `local_only` or
+   `branch_only` for sensitive/private work. Parallel specs on the same repo get
+   separate worktrees. Do not read source files for this — if repo knowledge is
+   missing, get it from an `Explore` subagent (`model: sonnet`) and consume only its
+   summary.
 2. **Spec.** For each task, spawn the `spec-builder` agent (it defaults to sonnet)
    with a directive of roughly 10 lines: goal, fixed decisions, likely files,
-   constraints, executor + priority. Spawn multiple spec-builders in parallel when
-   tasks are independent.
+   constraints, executor + priority, and the explicit `delivery_mode`. Spawn multiple
+   spec-builders in parallel when tasks are independent.
 3. **Sanity-check the spec path list** returned by spec-builder. Read a spec body
    only if its 5-line summary flags an open decision.
 4. **Execute.** For 3+ specs, or whenever the loop should leave the main session
