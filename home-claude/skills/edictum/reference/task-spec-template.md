@@ -1,6 +1,6 @@
 # Task Spec Template (commander → Codex / Claude subagent)
 
-Copy into `docs/tasks/<executor>-p<priority>-<n>-<slug>.md` (executor: codex | sonnet | opus).
+Copy into `.claude/tasks/<executor>-p<priority>-<n>-<slug>.md` (executor: codex | sonnet | opus).
 Specs must be executable cold — the implementer has no access to the planning conversation.
 Reference examples of completed specs: your project's completed-specs archive (e.g. `.claude/tasks-archive/done/`).
 

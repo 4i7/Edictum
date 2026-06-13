@@ -1,6 +1,6 @@
 ---
 name: spec-builder
-description: Drafts a cold-executable task spec file (docs/tasks/*.md) from a terse directive issued by the main session. Use whenever work is being delegated to Codex or a Claude subagent — the main session should NOT read source files or write specs itself. Input - a short directive (goal, chosen approach/tech, target files if known, constraints, executor, priority). Output - the spec file path plus a summary of at most 5 lines.
+description: Drafts a cold-executable task spec file (.claude/tasks/*.md) from a terse directive issued by the main session. Use whenever work is being delegated to Codex or a Claude subagent — the main session should NOT read source files or write specs itself. Input - a short directive (goal, chosen approach/tech, target files if known, constraints, executor, priority). Output - the spec file path plus a summary of at most 5 lines.
 tools: Read, Grep, Glob, Bash, Write
 model: sonnet
 ---
@@ -31,7 +31,7 @@ Rules:
    implementer ("実装方法は任せるが、〜を維持すること").
 4. 受け入れ基準: every criterion checkable by a command or a quick manual look.
    Always include the build/test command that must pass.
-5. Write the file to `docs/tasks/<executor>-p<priority>-<n>-<slug>.md` relative to
+5. Write the file to `.claude/tasks/<executor>-p<priority>-<n>-<slug>.md` relative to
    the project root (create the directory if needed). Choose `<n>` to avoid
    collision with existing specs. Body in Japanese, matching the template headings.
 6. Spec prose style: dense and factual. No motivation essays, no restating the
