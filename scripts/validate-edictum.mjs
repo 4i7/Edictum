@@ -86,14 +86,21 @@ addCheck("skill front matter", "home-claude/skills/edictum/SKILL.md", () => {
   return data ? requireKeys(data, ["name", "description"]) : "front matter block not found";
 });
 
-for (const agent of ["spec-builder", "acceptance-checker", "pipeline-runner"]) {
+const agentModels = {
+  "spec-builder": "sonnet",
+  "acceptance-checker": "sonnet",
+  "pipeline-runner": "sonnet",
+  "vcs-runner": "haiku",
+};
+
+for (const [agent, expectedModel] of Object.entries(agentModels)) {
   const file = `home-claude/agents/${agent}.md`;
   addCheck("agent front matter", file, () => {
     const data = parseFlatFrontMatter(read(file));
     if (!data) return "front matter block not found";
     const missing = requireKeys(data, ["name", "description", "tools", "model"]);
     if (missing) return missing;
-    return data.model.trim() === "sonnet" ? null : `model must be sonnet, got ${data.model}`;
+    return data.model.trim() === expectedModel ? null : `model must be ${expectedModel}, got ${data.model}`;
   });
 }
 

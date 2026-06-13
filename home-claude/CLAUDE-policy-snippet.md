@@ -55,6 +55,10 @@ fit, escalate rather than improvise.
   spend). Route review/result through a subagent that calls the companion script and
   returns only counts + a one-line summary + a findings-file path. `/codex:status` and
   `/codex:cancel` (no payload) are fine.
+- When checking 2+ read-only git/gh commands together, delegate to the `vcs-runner`
+  (haiku) agent and consume only its summary. Don't use it for a single command;
+  overhead exceeds savings. Write operations are out of scope and remain owned by
+  Codex delivery.
 - Attach intent to directives ("I'm building X for Y; this unblocks Z") — it measurably
   improves Codex/subagent output. Dispatch subagents in parallel; reuse `--resume`.
 - When unsure Codex can handle a task: tighten the directive and delegate anyway. The

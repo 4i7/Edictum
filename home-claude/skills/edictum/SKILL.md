@@ -68,7 +68,10 @@ the loop, how to write specs, how to invoke Codex safely, and how to pick model/
    acceptance-only), CI green, and change in-scope. For security-sensitive or
    architectural changes, first run `git diff --stat <base>...HEAD` and review the
    touched-file list, not the full diff, as a lightweight safety check. Otherwise
-   escalate to the user.
+   escalate to the user. When checking 2+ read-only git/gh commands together, delegate
+   to the `vcs-runner` (haiku) agent and consume only its summary. Don't use it for a
+   single command; overhead exceeds savings. Write operations are out of scope and
+   remain owned by Codex delivery.
 
 `/delegate <request>` runs steps 1–6 for you.
 
