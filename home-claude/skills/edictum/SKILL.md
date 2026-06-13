@@ -37,9 +37,9 @@ the loop, how to write specs, how to invoke Codex safely, and how to pick model/
    decisions, likely files, constraints, executor + priority, branch/worktree, and the
    explicit `delivery_mode` chosen in step 1). It writes a cold-executable spec to
    `.claude/tasks/<executor>-p<priority>-<n>-<slug>.md`. Spawn several in parallel for
-   independent tasks. Spec sections: 前提コンテキスト (incl. env workarounds) / 現状コード
-   (verbatim current code for changed regions) / 変更指示 (fixed vs. free) /
-   受け入れ基準 (runnable) / 納品形態 (branch, `delivery_mode`, commit/PR/CI policy).
+   independent tasks. Spec sections: Context (incl. env workarounds) / Current state
+   (verbatim current code for changed regions) / Changes (fixed vs. free) /
+   Acceptance criteria (runnable) / Delivery (branch, `delivery_mode`, commit/PR/CI policy).
    See `reference/task-spec-template.md`. The commander chooses `delivery_mode` per
    task: `local_only` = edit + test only, no commit; `branch_only` = commit to a
    local branch, no push; `pr_allowed` = push + open draft PR + CI, and remains the
@@ -56,7 +56,7 @@ the loop, how to write specs, how to invoke Codex safely, and how to pick model/
    unless the spec explicitly chooses `branch_only` or `local_only`. **For 3+ specs or
    any tier handoff, hand the whole loop to `pipeline-runner`** instead of
    orchestrating per-spec.
-4. **Verify.** `acceptance-checker` (sonnet) checks the 受け入れ基準 (CI-first when a PR
+4. **Verify.** `acceptance-checker` (sonnet) checks the Acceptance criteria (CI-first when a PR
    exists) and returns PASS/FAIL ≤10 lines. You read the verdict, never the diff. ONE
    corrective `--resume` on FAIL (bump effort one level); take over only after a 2nd FAIL.
 5. **Review — always via subagent, NEVER main-session `/codex:review`.** Default: one
@@ -113,15 +113,15 @@ Full data + sources: `reference/model-benchmarks.md`.
 Heuristics:
 
 - Everyday implementation: GPT-5.5 ≈ Opus 4.8 (SWE-bench Verified 88.7% vs 88.6%).
-- **推定** "hard but specifiable is Codex territory": commander-written specs neutralize
+- **Inference** "hard but specifiable is Codex territory": commander-written specs neutralize
   most of the SWE-bench-Pro gap (which measures *unsupervised* problem-solving). Validated
-  on TS+Rust/web; treat other stacks/domains as 要検証 — probe with one spec first.
+  on TS+Rust/web; treat other stacks/domains as unverified — probe with one spec first.
 - **Effort**: gpt-5.5 / `medium` is the workhorse for routine AND work-stream specs. Don't
   blanket-raise to high; escalate by evidence (high up front only for genuinely hard or
   >30-min specs; bump one level on a corrective `--resume`). `xhigh`/`max` are exceptional.
 - **Spec detail (delegated path)**: default to detailed specs — decisions + scope +
   acceptance criteria + env workarounds AND verbatim current code for the changed regions.
-  Goals-only specs are 仮説 for delegation (proven only in human-supervised manual runs).
+  Goals-only specs are a hypothesis for delegation (proven only in human-supervised manual runs).
 - Reserve Fable for judgment under ambiguity. Anything specifiable is delegable to Codex,
   and its progression is commandable by Opus/Sonnet.
 - Claude subagents take `model: fable|opus|sonnet|haiku`; per-subagent thinking effort is
@@ -145,4 +145,4 @@ Edictum ships with the author's calibration as an example. Replace it with yours
    project `CLAUDE.md` so `spec-builder` copies them into every spec's verification commands.
 2. After a handful of real delegated runs, record in `reference/model-benchmarks.md` what
    difficulty Codex handled at what effort, and adjust the heuristics. Mark anything not yet
-   observed as 仮説 / 推定 / 要検証.
+   observed as hypothesis / inference / unverified.

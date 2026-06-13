@@ -39,7 +39,7 @@ Pipeline:
    and returns a verdict table; skip to step 7 with its output. Otherwise hand each
    codex-targeted spec to the `codex:codex-rescue` subagent:
    instruct it to have Codex read the spec file at the given path and implement it
-   (`--write`), following the spec's 納品形態 — by default through to commit, push,
+   (`--write`), following the spec's Delivery — by default through to commit, push,
    draft PR, and CI green. Default `--background` so several specs run concurrently
    (use foreground only if the user passed `--fg`). Specs targeted at sonnet/opus
    go to a general-purpose subagent with that `model:` instead.

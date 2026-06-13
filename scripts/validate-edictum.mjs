@@ -118,6 +118,15 @@ addCheck("no docs/tasks residue", "home-claude/", () => {
   return hits.length ? `found docs/tasks in ${hits.join(", ")}` : null;
 });
 
+addCheck("no CJK in home-claude", "home-claude/", () => {
+  const hits = [];
+  const cjk = /[\u3040-\u30ff\u4e00-\u9fff]/;
+  for (const file of walkFiles("home-claude")) {
+    if (cjk.test(read(file))) hits.push(file);
+  }
+  return hits.length ? `found CJK characters in ${hits.join(", ")}` : null;
+});
+
 addCheck("marker integrity", "home-claude/CLAUDE-policy-snippet.md, install.ps1, install.sh", () => {
   const start = "<!-- EDICTUM:START";
   const end = "<!-- EDICTUM:END -->";
