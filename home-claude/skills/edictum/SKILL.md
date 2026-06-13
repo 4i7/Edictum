@@ -59,7 +59,9 @@ the loop, how to write specs, how to invoke Codex safely, and how to pick model/
    fall back to the general-purpose sonnet subagent per "Tiers, fallback, and handoff".
 4. **Verify.** `acceptance-checker` (sonnet) checks the Acceptance criteria (CI-first when a PR
    exists) and returns PASS/FAIL ≤10 lines. You read the verdict, never the diff. ONE
-   corrective `--resume` on FAIL (bump effort one level); take over only after a 2nd FAIL.
+   corrective dispatch on FAIL (bump effort one level): use Codex `--resume` for Codex
+   jobs, or send the follow-up to the same fallback subagent when Codex is unavailable;
+   take over only after a 2nd FAIL.
 5. **Review — always via subagent, NEVER main-session `/codex:review`.** Default: one
    review over the combined changes per stream; per-change + adversarial framing for
    security/architectural changes; acceptance-only for mechanical edits. The subagent
@@ -139,7 +141,9 @@ Heuristics:
   tell the user Codex is unavailable and that a Claude subagent is covering execution
   (this consumes Claude tokens, unlike Codex). Reroute that SAME spec to a built-in
   general-purpose subagent with `model: sonnet` to implement it (`haiku` only for
-  trivial mechanical specs), then continue the normal verify → review → merge loop.
+  trivial mechanical specs). If verification fails or review finds a fix-worthy issue,
+  send the one corrective follow-up to that same fallback subagent, then continue the
+  normal verify → review → merge loop.
 - **Across sessions**: write `.claude/tasks/HANDOFF-<slug>.md` from `reference/handoff-template.md`
   and continue in a lower-tier session. Finish/cancel in-flight Codex jobs first (visibility
   is session-scoped).
