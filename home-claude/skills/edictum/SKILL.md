@@ -55,7 +55,8 @@ the loop, how to write specs, how to invoke Codex safely, and how to pick model/
    Codex owns the full git lifecycle (branch → commit → push → draft PR → CI green)
    unless the spec explicitly chooses `branch_only` or `local_only`. **For 3+ specs or
    any tier handoff, hand the whole loop to `pipeline-runner`** instead of
-   orchestrating per-spec.
+   orchestrating per-spec. If the Codex dispatch fails on quota, billing, or auth,
+   fall back to the general-purpose sonnet subagent per "Tiers, fallback, and handoff".
 4. **Verify.** `acceptance-checker` (sonnet) checks the Acceptance criteria (CI-first when a PR
    exists) and returns PASS/FAIL ≤10 lines. You read the verdict, never the diff. ONE
    corrective `--resume` on FAIL (bump effort one level); take over only after a 2nd FAIL.
@@ -132,6 +133,13 @@ Heuristics:
 - **Fable 5 → phase zero only.** Once direction is set, propose handing control to Opus
   (default commander) or Sonnet (routine streams) rather than burning frontier tokens.
 - **Within a session**: delegate the spec-batch loop to `pipeline-runner`.
+- **Codex unavailable**: when Codex cannot execute a spec because usage-limit/quota is
+  exhausted, billing lapsed, auth failed, `pipeline-runner` returns
+  `BLOCKED(quota|auth)`, or a direct `codex:codex-rescue` dispatch errors on limits,
+  tell the user Codex is unavailable and that a Claude subagent is covering execution
+  (this consumes Claude tokens, unlike Codex). Reroute that SAME spec to a built-in
+  general-purpose subagent with `model: sonnet` to implement it (`haiku` only for
+  trivial mechanical specs), then continue the normal verify → review → merge loop.
 - **Across sessions**: write `.claude/tasks/HANDOFF-<slug>.md` from `reference/handoff-template.md`
   and continue in a lower-tier session. Finish/cancel in-flight Codex jobs first (visibility
   is session-scoped).

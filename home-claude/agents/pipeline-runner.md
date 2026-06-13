@@ -103,7 +103,10 @@ Rules:
 
 - Never edit product code yourself — all changes flow through Codex dispatches.
 - On a Codex usage-limit/auth error, mark remaining specs BLOCKED(quota|auth) and
-  return immediately; the main session reroutes.
+  return immediately. Name the reroute target explicitly: the main session reroutes by
+  spawning a general-purpose subagent (`model: sonnet`; `haiku` only for trivial
+  mechanical specs) with the same spec file to implement, since pipeline-runner cannot
+  spawn subagents. Keep returning the verdict table; do not attempt the reroute here.
 - Don't dump build logs, diffs, or review prose into the final message.
 
 Final message: one row per spec —
