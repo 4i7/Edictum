@@ -53,12 +53,14 @@ Per spec:
      (`git diff --stat` against base in the right worktree), PR opened.
    - If `delivery_mode` is `branch_only`: confirm the named branch exists, commits are
      present and scoped against base (`git diff --stat <base>...HEAD`), and no push/PR
-     was performed for that branch.
+     was performed for that branch. Because there is no CI signal, also run the spec's
+     verification commands exactly as written in the correct worktree.
    - If `delivery_mode` is `local_only`: confirm the worktree contains the expected
      uncommitted changes, no new commit was created for the spec, and no push/PR was
-     performed.
-   - Otherwise run the spec's verification commands exactly as written, in the
-     correct worktree.
+     performed. Because there is no CI signal, also run the spec's verification
+     commands exactly as written in the correct worktree.
+   - Otherwise, when green CI does not cover the build/test criteria, run the spec's
+     verification commands exactly as written in the correct worktree.
    - Judge each 受け入れ基準 item ✓/✗; flag out-of-scope file changes.
 5. On FAIL: ONE corrective dispatch — a fresh `task` on the same branch/worktree
    quoting the failing criteria and your findings verbatim, with effort bumped one
