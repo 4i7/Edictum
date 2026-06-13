@@ -1,0 +1,9 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Backups produced by the installer (never commit a user's CLAUDE.md backup)
+*.bak
+CLAUDE.md.bak
