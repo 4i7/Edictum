@@ -76,34 +76,75 @@ function New-BackupPath($path) {
   return $candidate
 }
 
+function Get-LineNumber($content, $index) {
+  if ($index -le 0) { return 1 }
+  return (($content.Substring(0, $index) -split "`n").Count)
+}
+
+function Get-MarkerInfo($content, $path) {
+  $pos = 0
+  $openStart = -1
+  $block = $null
+
+  while ($pos -lt $content.Length) {
+    $nextStart = $content.IndexOf($startTag, $pos)
+    $nextEnd = $content.IndexOf($endTag, $pos)
+    if ($nextStart -lt 0 -and $nextEnd -lt 0) { break }
+
+    if ($nextEnd -ge 0 -and ($nextStart -lt 0 -or $nextEnd -lt $nextStart)) {
+      if ($openStart -lt 0) {
+        $line = Get-LineNumber $content $nextEnd
+        return @{ Issue = "Found $endTag in $path near line $line without a preceding $startTag. Manually repair the marker block before re-running." }
+      }
+      $endIndex = $nextEnd + $endTag.Length
+      if ($block) {
+        $line = Get-LineNumber $content $openStart
+        return @{ Issue = "Found multiple EDICTUM blocks in $path near line $line. Manually repair the marker blocks before re-running." }
+      }
+      $block = @{ Start = $openStart; End = $endIndex }
+      $openStart = -1
+      $pos = $endIndex
+      continue
+    }
+
+    if ($openStart -ge 0) {
+      $line = Get-LineNumber $content $nextStart
+      return @{ Issue = "Found nested $startTag in $path near line $line before $endTag. Manually repair the marker block before re-running." }
+    }
+    if ($block) {
+      $line = Get-LineNumber $content $nextStart
+      return @{ Issue = "Found multiple EDICTUM blocks in $path near line $line. Manually repair the marker blocks before re-running." }
+    }
+    $openStart = $nextStart
+    $pos = $nextStart + $startTag.Length
+  }
+
+  if ($openStart -ge 0) {
+    $line = Get-LineNumber $content $openStart
+    return @{ Issue = "Found $startTag in $path near line $line, but $endTag was not found. Manually repair the marker block before re-running." }
+  }
+  if ($block) { return @{ Issue = $null; HasBlock = $true; Start = $block.Start; End = $block.End } }
+  return @{ Issue = $null; HasBlock = $false }
+}
+
 function Get-MarkerIssue($path) {
   if (-not (Test-Path -LiteralPath $path)) { return $null }
   $content = Get-Content -LiteralPath $path -Raw
-  $si = $content.IndexOf($startTag)
-  if ($si -lt 0) { return $null }
-  $ei = $content.IndexOf($endTag, $si)
-  if ($ei -ge 0) { return $null }
-  $prefix = $content.Substring(0, $si)
-  $line = ($prefix -split "`n").Count
-  return "Found $startTag in $path near line $line, but $endTag was not found. Manually repair the marker block before re-running."
+  return (Get-MarkerInfo $content $path).Issue
 }
 
 function Remove-EdictumBlock($content) {
-  $si = $content.IndexOf($startTag)
-  if ($si -lt 0) { return $content }
-  $ei = $content.IndexOf($endTag, $si)
-  if ($ei -lt 0) { throw "Missing EDICTUM end marker." }
-  $ei += $endTag.Length
-  return ($content.Substring(0, $si) + $content.Substring($ei)).TrimEnd() + "`r`n"
+  $info = Get-MarkerInfo $content "CLAUDE.md"
+  if ($info.Issue) { throw $info.Issue }
+  if (-not $info.HasBlock) { return $content }
+  return ($content.Substring(0, $info.Start) + $content.Substring($info.End)).TrimEnd() + "`r`n"
 }
 
 function Merge-EdictumBlock($content, $snippet) {
-  $si = $content.IndexOf($startTag)
-  if ($si -ge 0) {
-    $ei = $content.IndexOf($endTag, $si)
-    if ($ei -lt 0) { throw "Missing EDICTUM end marker." }
-    $ei += $endTag.Length
-    return $content.Substring(0, $si) + $snippet + $content.Substring($ei)
+  $info = Get-MarkerInfo $content "CLAUDE.md"
+  if ($info.Issue) { throw $info.Issue }
+  if ($info.HasBlock) {
+    return $content.Substring(0, $info.Start) + $snippet + $content.Substring($info.End)
   }
   return $content.TrimEnd() + "`r`n`r`n" + $snippet + "`r`n"
 }

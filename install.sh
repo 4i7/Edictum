@@ -68,20 +68,47 @@ backup_path() {
 marker_state() {
   [ -f "$1" ] || { echo "none"; return; }
   awk -v s="$start" -v e="$end" '
-    index($0, s) && !seen { seen=NR; in_block=1 }
-    in_block && index($0, e) { found=1; in_block=0 }
+    {
+      si = index($0, s)
+      ei = index($0, e)
+      if (si && in_block) { print "bad:nested:" NR; bad=1; exit }
+      if (ei && !in_block && !si) { print "bad:orphan:" NR; bad=1; exit }
+      if (si) {
+        if (completed) { print "bad:multiple:" NR; bad=1; exit }
+        if (ei && ei > si) { completed=1; next }
+        in_block=1
+        start_line=NR
+        next
+      }
+      if (ei && in_block) {
+        in_block=0
+        completed=1
+      }
+    }
     END {
-      if (seen && !found) { print "bad:" seen }
-      else if (seen) { print "ok" }
-      else { print "none" }
+      if (!bad) {
+        if (in_block) { print "bad:missing:" start_line }
+        else if (completed) { print "ok" }
+        else { print "none" }
+      }
     }
   ' "$1"
 }
 
 strip_block() {
   awk -v s="$start" -v e="$end" '
-    index($0, s) { skip=1; next }
-    skip && index($0, e) { skip=0; next }
+    {
+      si = index($0, s)
+      ei = index($0, e)
+      if (skip) {
+        if (ei) { skip=0 }
+        next
+      }
+      if (si) {
+        if (!ei || ei < si) { skip=1 }
+        next
+      }
+    }
     !skip { print }
   ' "$1" | awk 'NF { last=NR } { line[NR]=$0 } END { for (i=1; i<=last; i++) print line[i] }'
 }
@@ -138,8 +165,17 @@ fi
 state="$(marker_state "$claudemd")"
 case "$state" in
   bad:*)
-    line=${state#bad:}
-    echo "Found $start in $claudemd near line $line, but $end was not found. Manually repair the marker block before re-running." >&2
+    rest=${state#bad:}
+    kind=${rest%%:*}
+    line=${rest#*:}
+    case "$kind" in
+      missing) issue="Found $start in $claudemd near line $line, but $end was not found." ;;
+      nested) issue="Found nested $start in $claudemd near line $line before $end." ;;
+      multiple) issue="Found multiple EDICTUM blocks in $claudemd near line $line." ;;
+      orphan) issue="Found $end in $claudemd near line $line without a preceding $start." ;;
+      *) issue="Found an invalid EDICTUM marker block in $claudemd near line $line." ;;
+    esac
+    echo "$issue Manually repair the marker block before re-running." >&2
     echo "No files were changed." >&2
     exit 1
     ;;
