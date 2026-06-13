@@ -42,11 +42,18 @@ Pipeline:
    (`--write`), following the spec's Delivery — by default through to commit, push,
    draft PR, and CI green. Default `--background` so several specs run concurrently
    (use foreground only if the user passed `--fg`). Specs targeted at sonnet/opus
-   go to a general-purpose subagent with that `model:` instead.
+   go to a general-purpose subagent with that `model:` instead. If
+   `codex:codex-rescue` fails on quota/billing/auth, tell the user Codex is
+   unavailable and a Claude subagent is covering execution (spends Claude tokens),
+   then reroute that SAME spec to a general-purpose subagent with `model: sonnet`
+   (`haiku` only for trivial mechanical specs). Record whether Codex or the fallback
+   subagent implemented each spec so step 5 routes corrections correctly.
 5. **Verify.** When a job reports done, spawn `acceptance-checker` with the spec
-   path. PASS → mark the task done. FAIL → send ONE corrective follow-up to Codex
-   via `codex:codex-rescue` `--resume`, quoting the checker's findings verbatim; on
-   a second FAIL, escalate to the main session (take over directly).
+   path. PASS → mark the task done. FAIL → send ONE corrective follow-up to the SAME
+   executor that implemented the spec, quoting the checker's findings verbatim: Codex
+   jobs use `codex:codex-rescue` `--resume`; fallback implementations re-spawn the
+   same general-purpose subagent model with the failing findings. On a second FAIL,
+   escalate to the main session (take over directly).
 6. **Review (always via subagent — never main-session `/codex:review`).** State the
    plan in one line: default for nontrivial work is one review over the combined
    changes; per-change + adversarial framing for security/architectural changes;
