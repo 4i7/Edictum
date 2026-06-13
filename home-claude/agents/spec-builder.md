@@ -35,20 +35,20 @@ Rules:
    first-try all carried this level of detail, so default to it for bug-fix and
    refactor specs. Use plain pointers (paths/symbols) only for surrounding context
    the implementer just needs to navigate, not modify. (Goals-only specs have worked
-   in human-supervised manual Codex runs, but that is 仮説 for the delegated path —
+   in human-supervised manual Codex runs, but that remains a hypothesis for the delegated path —
    don't thin out a delegated spec on that basis.) Always include the project's known
    sandbox workarounds in the verification commands.
-3. 変更指示: numbered concrete steps. Mark which choices are FIXED vs. left to the
-   implementer ("実装方法は任せるが、〜を維持すること").
-4. 受け入れ基準: every criterion checkable by a command or a quick manual look.
+3. Changes: numbered concrete steps. Mark which choices are FIXED vs. left to the
+   implementer ("implementation is up to you, but preserve X").
+4. Acceptance criteria: every criterion checkable by a command or a quick manual look.
    Always include the build/test command that must pass.
-5. 納品形態: always write the directive's explicit `delivery_mode` into the spec.
+5. Delivery: always write the directive's explicit `delivery_mode` into the spec.
    If the directive omitted it, choose `pr_allowed` only for a clearly user-owned
    repo; for non-owned, unfamiliar, or untrusted repos choose `branch_only` or
    `local_only` unless the directive contains explicit user opt-in for push/PR.
 6. Write the file to `.claude/tasks/<executor>-p<priority>-<n>-<slug>.md` relative to
    the project root (create the directory if needed). Choose `<n>` to avoid
-   collision with existing specs. Body in Japanese, matching the template headings.
+   collision with existing specs. Body in English, matching the template headings.
 7. Spec prose style: dense and factual. No motivation essays, no restating the
    obvious.
 

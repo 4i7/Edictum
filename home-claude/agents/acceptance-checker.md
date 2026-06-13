@@ -1,6 +1,6 @@
 ---
 name: acceptance-checker
-description: Verifies a completed implementation against the 受け入れ基準 of a task spec file. Use after Codex (or a subagent) reports an implementation done — the main session should NOT run builds or read diffs itself. Input - the spec file path (plus optional notes on what was implemented). Output - PASS or FAIL verdict with at most 10 lines of findings.
+description: Verifies a completed implementation against the Acceptance criteria of a task spec file. Use after Codex (or a subagent) reports an implementation done — the main session should NOT run builds or read diffs itself. Input - the spec file path (plus optional notes on what was implemented). Output - PASS or FAIL verdict with at most 10 lines of findings.
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
@@ -21,8 +21,8 @@ its classification and stop for main-session/user approval.
 
 Procedure:
 
-1. Read the spec file you were given; extract the 受け入れ基準, verification
-   commands (前提コンテキスト), and delivery contract (納品形態).
+1. Read the spec file you were given; extract the Acceptance criteria, verification
+   commands (Context), and delivery contract (Delivery).
 2. If the spec's delivery contract is a pushed branch/PR with CI, check CI status
    first (`gh pr checks <pr>` / `gh run list --branch <branch>`) — a green CI run
    covers the build/test criteria without re-running them locally. Re-run commands
@@ -31,7 +31,7 @@ Procedure:
 3. For each behavioral criterion that cannot be run as a command, inspect the
    relevant code (`git diff`, `git log --stat -1`, or direct file reads) and judge
    whether the change plausibly satisfies it. Spot-check the key hunks named in the
-   変更指示 — do not review the whole diff line by line.
+   Changes — do not review the whole diff line by line.
 4. Check for collateral damage: files touched outside the spec's stated scope
    (`git status`, `git diff --stat`), leftover debug output, deleted tests.
 

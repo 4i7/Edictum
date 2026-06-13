@@ -33,16 +33,16 @@ Subcommands: `task [--background] [--write] [--model M] [--effort E] [prompt]`,
 
 Per spec:
 
-1. Read the spec: 前提コンテキスト (verification commands incl. sandbox
-   workarounds), 変更指示, 受け入れ基準, 納品形態 (branch/worktree, commit/PR/CI
+1. Read the spec: Context (verification commands incl. sandbox
+   workarounds), Changes, Acceptance criteria, Delivery (branch/worktree, commit/PR/CI
    policy, including any `delivery_mode`).
 2. Dispatch: `node <companion> task --background --write [overrides] "<prompt>"`
    where the prompt tells Codex to read the spec file at its absolute path,
-   implement it fully, follow its 納品形態 and `delivery_mode` exactly, and report
+   implement it fully, follow its Delivery and `delivery_mode` exactly, and report
    files changed + results. Default model/effort comes from the spec or the caller;
    otherwise leave unset (gpt-5.5/medium).
    Specs may run concurrently ONLY if each has its own branch AND worktree per its
-   納品形態; otherwise serialize. Record each job-id.
+   Delivery; otherwise serialize. Record each job-id.
 3. Poll `status <job-id>` at relaxed intervals (≥60s — work-stream runs take
    15–25 min); between polls, prepare the next spec's acceptance plan. Fetch
    `result <job-id>` on completion.
@@ -61,7 +61,7 @@ Per spec:
      commands exactly as written in the correct worktree.
    - Otherwise, when green CI does not cover the build/test criteria, run the spec's
      verification commands exactly as written in the correct worktree.
-   - Judge each 受け入れ基準 item ✓/✗; flag out-of-scope file changes.
+   - Judge each Acceptance criteria item ✓/✗; flag out-of-scope file changes.
 5. On FAIL: ONE corrective dispatch — a fresh `task` on the same branch/worktree
    quoting the failing criteria and your findings verbatim, with effort bumped one
    level. A second FAIL on the same spec → stop that stream, mark ESCALATE.
