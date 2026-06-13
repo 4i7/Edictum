@@ -59,4 +59,5 @@ fit, escalate rather than improvise.
   improves Codex/subagent output. Dispatch subagents in parallel; reuse `--resume`.
 - When unsure Codex can handle a task: tighten the directive and delegate anyway. The
   commander implements only after two Codex failures on the same spec.
+- Before merging security-sensitive or architectural changes, run `git diff --stat <base>...HEAD` and review the touched-file list only.
 <!-- EDICTUM:END -->

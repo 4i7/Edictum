@@ -38,15 +38,19 @@ the loop, how to write specs, how to invoke Codex safely, and how to pick model/
    spec to `.claude/tasks/<executor>-p<priority>-<n>-<slug>.md`. Spawn several in parallel
    for independent tasks. Spec sections: 前提コンテキスト (incl. env workarounds) /
    現状コード (verbatim current code for changed regions) / 変更指示 (fixed vs. free) /
-   受け入れ基準 (runnable) / 納品形態 (branch, commit/PR/CI policy). See
-   `reference/task-spec-template.md`.
+   受け入れ基準 (runnable) / 納品形態 (branch, `delivery_mode`, commit/PR/CI policy).
+   See `reference/task-spec-template.md`. The commander chooses `delivery_mode` per
+   task: `local_only` = edit + test only, no commit; `branch_only` = commit to a
+   local branch, no push; `pr_allowed` = push + open draft PR + CI, and remains the
+   default. Use `local_only` or `branch_only` for sensitive/private work.
    Keep `.claude/tasks/` and `.claude/tasks/results/` local and gitignored; they are
    ephemeral work products that may contain verbatim source or secrets.
 3. **Execute end-to-end.** `Agent` tool, `subagent_type: "codex:codex-rescue"`, pointing
-   at the spec file, `--write`, `--background`. Default delivery: Codex owns the full git
-   lifecycle (branch → commit → push → draft PR → CI green) unless the spec says
-   "leave uncommitted" (only when sharing a worktree). **For 3+ specs or any tier
-   handoff, hand the whole loop to `pipeline-runner`** instead of orchestrating per-spec.
+   at the spec file, `--write`, `--background`. Default `pr_allowed` delivery means
+   Codex owns the full git lifecycle (branch → commit → push → draft PR → CI green)
+   unless the spec explicitly chooses `branch_only` or `local_only`. **For 3+ specs or
+   any tier handoff, hand the whole loop to `pipeline-runner`** instead of
+   orchestrating per-spec.
 4. **Verify.** `acceptance-checker` (sonnet) checks the 受け入れ基準 (CI-first when a PR
    exists) and returns PASS/FAIL ≤10 lines. You read the verdict, never the diff. ONE
    corrective `--resume` on FAIL (bump effort one level); take over only after a 2nd FAIL.
@@ -56,7 +60,10 @@ the loop, how to write specs, how to invoke Codex safely, and how to pick model/
    runs `node <companion> review|adversarial-review …` and returns counts + a one-line
    summary + a findings-file path. You consume count + path, never the review prose.
 6. **Merge decision.** Merge when acceptance PASS, review findings resolved (or plan was
-   acceptance-only), CI green, and change in-scope. Otherwise escalate to the user.
+   acceptance-only), CI green, and change in-scope. For security-sensitive or
+   architectural changes, first run `git diff --stat <base>...HEAD` and review the
+   touched-file list, not the full diff, as a lightweight safety check. Otherwise
+   escalate to the user.
 
 `/delegate <request>` runs steps 1–6 for you.
 
