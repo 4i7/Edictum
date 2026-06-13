@@ -185,6 +185,7 @@ installed_paths=(
   "$claude/agents/spec-builder.md"
   "$claude/agents/acceptance-checker.md"
   "$claude/agents/pipeline-runner.md"
+  "$claude/agents/vcs-runner.md"
   "$claude/commands/delegate.md"
   "$claude/skills/edictum"
 )

@@ -150,6 +150,17 @@ addCheck("companion path sentinel", "home-claude/agents/pipeline-runner.md, home
   return null;
 });
 
+addCheck("installer uninstall agent targets", "install.ps1, install.sh", () => {
+  const agents = walkFiles("home-claude/agents").map((file) => path.basename(file));
+  for (const agent of agents) {
+    const psTarget = `agents\\${agent}`;
+    const shTarget = `agents/${agent}`;
+    if (!read("install.ps1").includes(psTarget)) return `install.ps1 missing uninstall target ${psTarget}`;
+    if (!read("install.sh").includes(shTarget)) return `install.sh missing uninstall target ${shTarget}`;
+  }
+  return null;
+});
+
 addCheck(".gitignore delegation artifacts", ".gitignore", () => {
   const content = read(".gitignore");
   for (const needle of [".claude/tasks/", ".claude/tasks/results/"]) {

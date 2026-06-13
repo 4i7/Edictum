@@ -59,6 +59,7 @@ $installedPaths = @(
   (Join-Path $claude "agents\spec-builder.md"),
   (Join-Path $claude "agents\acceptance-checker.md"),
   (Join-Path $claude "agents\pipeline-runner.md"),
+  (Join-Path $claude "agents\vcs-runner.md"),
   (Join-Path $claude "commands\delegate.md"),
   (Join-Path $claude "skills\edictum")
 )
